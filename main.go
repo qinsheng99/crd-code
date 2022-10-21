@@ -90,7 +90,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	go controllers.Handle(req, mgr.GetClient())
+	go controllers.Handle(req, mgr.GetClient(), ctrl.Log.WithName("handle"))
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

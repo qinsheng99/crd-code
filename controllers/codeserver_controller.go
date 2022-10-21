@@ -66,19 +66,16 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	}
 
 	if r.findStatusType(&code.Status, codev1.ServerErrored) {
-		return ctrl.Result{Requeue: false}, fmt.Errorf("server error")
+		err := r.Client.Delete(context.TODO(), code)
+		if err != nil {
+			return ctrl.Result{Requeue: true}, err
+		}
+		return ctrl.Result{Requeue: false}, fmt.Errorf("server error, delete crd resource")
 	} else if r.findStatusType(&code.Status, codev1.ServerRecycled) {
 		err := r.Delete(code)
 		if err != nil {
 			rl.Error(err, "delete crd deployment source failed")
 			return ctrl.Result{Requeue: false}, err
-		}
-		var b bool
-		b = r.addStateCondition(&code.Status, r.newStateCondition(codev1.ServerInactive, "过期了,资源被删除了", nil))
-
-		if b {
-			_ = r.Status().Update(context.TODO(), code)
-			rl.Info("delete crd deployment resource success")
 		}
 		return ctrl.Result{Requeue: false}, nil
 	} else {
@@ -102,7 +99,7 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 				rl.Error(err, "update crd source failed")
 				return ctrl.Result{Requeue: true, RequeueAfter: time.Second * 20}, err
 			}
-			rl.Info("crd resource update success")
+			rl.Info("crd resource status update success")
 		}
 		d := int64(100)
 		if *code.Spec.RecycleAfterSeconds > 0 {
@@ -113,7 +110,7 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			duration: d,
 			resource: req.NamespacedName,
 			t:        metav1.Time{Time: time.Now()},
-			flag:     *code.Spec.Add,
+			flag:     code.Spec.Add,
 		}
 	}
 
