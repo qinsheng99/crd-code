@@ -1,0 +1,16 @@
+domain: zjm.com
+layout:
+- go.kubebuilder.io/v3
+projectName: code
+repo: code
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: zjm.com
+  group: code
+  kind: CodeServer
+  path: code/api/v1
+  version: v1
+version: "3"

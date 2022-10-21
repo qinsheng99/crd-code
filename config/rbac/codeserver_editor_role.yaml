@@ -1,0 +1,24 @@
+# permissions for end users to edit codeservers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: codeserver-editor-role
+rules:
+- apiGroups:
+  - code.zjm.com
+  resources:
+  - codeservers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - code.zjm.com
+  resources:
+  - codeservers/status
+  verbs:
+  - get

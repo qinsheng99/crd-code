@@ -1,0 +1,33 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - code.zjm.com
+  resources:
+  - codeservers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - code.zjm.com
+  resources:
+  - codeservers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - code.zjm.com
+  resources:
+  - codeservers/status
+  verbs:
+  - get
+  - patch
+  - update
