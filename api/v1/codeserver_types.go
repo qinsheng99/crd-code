@@ -37,7 +37,7 @@ type CodeServerSpec struct {
 	RecycleAfterSeconds  *int64 `json:"recycleAfterSeconds,omitempty"`
 	InactiveAfterSeconds *int64 `json:"inactiveAfterSeconds,omitempty"`
 	//add
-	Add  *bool       `json:"add,omitempty" description:"add"`
+	Add  bool        `json:"add,omitempty" description:"add"`
 	Envs []v1.EnvVar `json:"envs,omitempty"`
 }
 

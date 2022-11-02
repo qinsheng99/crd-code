@@ -98,11 +98,6 @@ func (in *CodeServerSpec) DeepCopyInto(out *CodeServerSpec) {
 		*out = new(int64)
 		**out = **in
 	}
-	if in.Add != nil {
-		in, out := &in.Add, &out.Add
-		*out = new(bool)
-		**out = **in
-	}
 	if in.Envs != nil {
 		in, out := &in.Envs, &out.Envs
 		*out = make([]corev1.EnvVar, len(*in))
