@@ -72,6 +72,10 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		}
 		return ctrl.Result{Requeue: false}, fmt.Errorf("server error, delete crd resource")
 	} else if r.findStatusType(&code.Status, codev1.ServerRecycled) {
+		r.Event <- CodeEvent{
+			resource: req.NamespacedName,
+			typ:      "delete",
+		}
 		err := r.Delete(code)
 		if err != nil {
 			rl.Error(err, "delete crd deployment source failed")
@@ -111,6 +115,7 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			resource: req.NamespacedName,
 			t:        metav1.Time{Time: time.Now()},
 			flag:     code.Spec.Add,
+			typ:      "add-update",
 		}
 	}
 

@@ -18,6 +18,7 @@ type CodeEvent struct {
 	resource types.NamespacedName
 	t        metav1.Time
 	flag     bool
+	typ      string
 }
 
 var m = make(map[string]CodeEvent)
@@ -28,7 +29,12 @@ func Handle(e <-chan CodeEvent, c client.Client, logger logr.Logger) {
 	for {
 		select {
 		case ev := <-e:
-			addorupdate(ev, logger)
+			switch ev.typ {
+			case "add-update":
+				addorupdate(ev, logger)
+			case "delete":
+				deleteResource(ev)
+			}
 		case <-t:
 			updatestatus(c, logger)
 		}
@@ -78,5 +84,11 @@ func updatestatus(c client.Client, logger logr.Logger) {
 			}
 			delete(m, k)
 		}
+	}
+}
+
+func deleteResource(c CodeEvent) {
+	if _, ok := m[c.resource.String()]; ok {
+		delete(m, c.resource.String())
 	}
 }
