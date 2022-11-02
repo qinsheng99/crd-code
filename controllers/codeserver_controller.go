@@ -19,7 +19,6 @@ package controllers
 import (
 	codev1 "code/api/v1"
 	"context"
-	"fmt"
 	"github.com/go-logr/logr"
 	appv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -62,7 +61,10 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	code := &codev1.CodeServer{}
 	if err := r.Client.Get(ctx, req.NamespacedName, code); err != nil {
 		rl.Error(err, "get crd source failed")
-		return ctrl.Result{Requeue: false}, err
+		if errors.IsNotFound(err) {
+			return ctrl.Result{}, nil
+		}
+		return ctrl.Result{}, err
 	}
 
 	if r.findStatusType(&code.Status, codev1.ServerErrored) {
@@ -70,7 +72,6 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		if err != nil {
 			return ctrl.Result{Requeue: true}, err
 		}
-		return ctrl.Result{Requeue: false}, fmt.Errorf("server error, delete crd resource")
 	} else if r.findStatusType(&code.Status, codev1.ServerRecycled) {
 		r.Event <- CodeEvent{
 			resource: req.NamespacedName,
@@ -79,7 +80,12 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		err := r.Delete(code)
 		if err != nil {
 			rl.Error(err, "delete crd deployment source failed")
-			return ctrl.Result{Requeue: false}, err
+			return ctrl.Result{}, err
+		}
+		err = r.Client.Delete(context.TODO(), code)
+		if err != nil {
+			rl.Error(err, "delete crd source failed")
+			return ctrl.Result{}, err
 		}
 		return ctrl.Result{Requeue: false}, nil
 	} else {
