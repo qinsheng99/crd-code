@@ -17,7 +17,7 @@ type CodeEvent struct {
 	duration int64
 	resource types.NamespacedName
 	t        metav1.Time
-	flag     *bool
+	flag     bool
 }
 
 var m = make(map[string]CodeEvent)
@@ -40,8 +40,7 @@ func addorupdate(c CodeEvent, logger logr.Logger) {
 	l.Lock()
 	defer l.Unlock()
 	if obj, ok := m[c.resource.String()]; ok {
-		flag := *c.flag
-		if flag {
+		if c.flag {
 			log.Info(fmt.Sprintf("添加了%d秒\n", c.duration))
 			obj.duration = obj.duration + c.duration
 		}

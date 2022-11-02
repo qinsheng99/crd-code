@@ -110,7 +110,7 @@ func (r *CodeServerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 			duration: d,
 			resource: req.NamespacedName,
 			t:        metav1.Time{Time: time.Now()},
-			flag:     code.Spec.Add,
+			flag:     *code.Spec.Add,
 		}
 	}
 
