@@ -39,6 +39,7 @@ func addorupdate(c CodeEvent, logger logr.Logger) {
 	log := logger.WithName("resource add or update")
 	l.Lock()
 	defer l.Unlock()
+
 	if obj, ok := m[c.resource.String()]; ok {
 		if c.flag {
 			log.Info(fmt.Sprintf("添加了%d秒\n", c.duration))
