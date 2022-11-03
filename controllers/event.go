@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	codev1 "code/api/v1"
 	"context"
 	"fmt"
 	"github.com/go-logr/logr"
+	codev1 "github.com/qinsheng99/crd-code/api/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"

@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	codev1 "code/api/v1"
+	codev1 "github.com/qinsheng99/crd-code/api/v1"
 	appv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
